@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.UUID;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -17,6 +20,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Table;
 
 @Entity
@@ -35,11 +39,12 @@ public class Module implements Serializable{
     private String description;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(optional = false) // de nombreux modules ne peuvent avoir qu’un seul cours
-    private Course course; // está vinculado ao curso
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private Course course; 
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(mappedBy = "module")
+    @OneToMany(mappedBy = "module", fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SUBSELECT)
     private Set<Lesson> lessons;
 
     @Column(nullable = false)
